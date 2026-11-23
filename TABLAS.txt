@@ -1,0 +1,60 @@
+CREATE TABLE USUARIO(
+
+    id_usuario INT AUTO_INCREMENT PRIMARY KEY,	-- Id usuario, PK, incrementa automaticamente 
+    nombre VARCHAR(50) NOT NULL, 				-- Nombre, no nulo
+    correo VARCHAR(100) NOT NULL UNIQUE, 		-- Correo, no nulo y único
+    clave VARCHAR(200) NOT NULL, 				-- Clave, no nulo
+    estado TINYINT(1) DEFAULT 1					-- estado VARCHAR(20) DEFAULT 'ACTIVO' -- Estado de usuario, activo por defecto
+    
+    );
+
+
+CREATE TABLE CATEGORIA(
+
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY, 	-- Id categoria, PK
+    nombre VARCHAR (50) NOT NULL, 					-- Nombre de categoría
+    descripción TEXT, 								-- Descripción de la categoría
+    estado TINYINT(1) DEFAULT 1 					-- Estado de la categoría, activa por defecto
+
+);
+
+    
+CREATE TABLE PRODUCTO(
+
+    id_producto INT AUTO_INCREMENT PRIMARY KEY, 	-- Id producto, PK, incrementa automaticamente
+    codigo VARCHAR(50) NOT NULL UNIQUE, 			-- Código de producto, único y no nulo
+    nombre VARCHAR(50) NOT NULL, 					-- Nombre del producto, no nulo
+    descripcion TEXT, 								-- Descripción del producto
+    precio INT NOT NULL 							-- Precio del producto, no nulo
+    	CHECK (precio >= 0), 						-- >> Verifica que el valor no sea negativo
+
+	stock_actual INT NOT NULL 						-- Stock actual del producto, no nulo
+        CHECK (stock_actual >= 0), 					-- >> Verifica que el valor no sea negativo
+
+    stock_minimo INT NOT NULL 						-- Stock minimo del producto, no nulo
+    	CHECK (stock_minimo >= 0), 					-- >> Verifica que el valor no sea negativo
+
+    estado TINYINT(1) DEFAULT 1, 					-- Estado del producto, activo por defecto
+    id_categoria INT NOT NULL, 						-- Id de la categoría del producto
+    	FOREIGN KEY (id_categoria) REFERENCES CATEGORIA(id_categoria) -- >> Definición de FK (id_categoria) desde tabla CATEGORIA
+
+);
+
+   
+CREATE TABLE MOVIMIENTO(
+
+	id_movimiento INT AUTO_INCREMENT PRIMARY KEY, 					-- Id de movimiento, PK, incrementa automaticamente
+    fecha_hora DATETIME NOT NULL, 									-- Fecha y hora, no nulo
+
+    tipo ENUM('ENTRADA', 'SALIDA') NOT NULL, 						-- Tipo de movimiento, entrada o salida no nulo
+    cantidad INT NOT NULL 											-- Cantidad de productos en el movimiento, no nulo
+    	CHECK (cantidad > 0), 										-- >> Verifica que el valor no sea negativo 
+
+    observación TEXT, 												-- Observación del movimiento, texto
+    id_producto INT NOT NULL, 										-- Id del producto, FK
+    	FOREIGN KEY (id_producto) REFERENCES PRODUCTO(id_producto), -- >> Definición de FK (id_producto) desde tabla PRODUCTO
+
+    id_usuario INT NOT NULL, 										-- Id del usuario responsable, FK
+    	FOREIGN KEY (id_usuario) REFERENCES USUARIO(id_usuario) 	-- >> Definición de FK (id_usuario) desde tabla USUARIO
+
+); 
